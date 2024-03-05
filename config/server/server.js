@@ -1,0 +1,63 @@
+const fs = require("fs")
+const path = require("path")
+const cors = require("cors")
+const http = require("http")
+const express = require("express")
+const app = express()
+const bodyParser = require("body-parser")
+const { loopFileRoute } = require("../fileRoute/fileRoutes")
+const Database = require("../../db/db")
+require("dotenv").config()
+
+class Server {
+    constructor(){
+
+    }
+    registerMiddleware(){
+     
+    }
+    startServer(){
+        const port = process.env.PORT
+        
+        
+        app.use(express.json())
+        app.use(bodyParser.json({limit:"10mb"}))
+        app.use(cors({
+            "origin": "*",
+            "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+            "preflightContinue": false,
+            "optionsSuccessStatus": 204
+          }))
+        // loop through routes
+         this.registerRoute()
+        //databse connect
+        const db = new Database()
+        db.getConnect()
+       
+        // const server = http.createServer()
+        // server.listen(port, function(){
+        //     console.log("Server Listen: ",port)
+        // })
+        app.listen(port,function(){
+            console.log("Server: ",port)
+        })
+       
+    }
+    registerRoute(dir =""){
+        const self = this
+        const base_dir = path.join(process.cwd() + "/routes")
+        const folders = fs.readdirSync(base_dir + dir)
+        for(let folder of folders){
+            let pathes = path.join(base_dir + dir + "/"+ folder) 
+            let stats = fs.lstatSync(pathes)
+            if(stats.isDirectory()){
+                self.registerRoute(dir+ "/"+ folder)
+            }
+            if(stats.isFile()){
+                require(pathes)(app)
+            }
+            }
+    }
+}
+
+module.exports= Server
