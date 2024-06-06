@@ -1,0 +1,142 @@
+const { Api } = require("../../config/api/api")
+
+class TreatmentVoucherController {
+    constructor(){}
+    //create reward point rule
+    async createTreatmentVoucher (req,res) {
+        try {
+            let response = await Api(req["user"].clinicBaseURL, req["user"].clinicToken).post("wallet-treatment-voucher/sell",req.body)
+            if(response.data.success){
+                res.status(200).send({
+                    success: true,
+                    message: "Created Successfully"
+                })
+            }else {
+                res.status(200).send({
+                    success: response.data.success,
+                    message: response.data.message
+                })
+            }
+        }catch(error){
+            res.status(500).send({
+                error: true,
+                message: error.message
+            })
+        }
+    }
+    //list all Treatment Voucher by id
+    async listAllTreatmentVoucher (req,res) {
+        try {
+            let { id } = req.query
+            let param = {}
+            id ? param["relatedUser"] = id : ""
+            let response = await Api(req["user"].clinicBaseURL, req["user"].clinicToken).get("wallet-treatment-voucher/lists",{
+                params: {...param}
+            })
+            response.data.success ? res.status(200).send({ success: response.data.success, message: response.data.message, data: response.data.data })
+                : res.status(400).send({
+                    success: false,
+                    message: "Something went wrong"
+                })
+            
+        }catch(error){
+            res.status(500).send({
+                error: true,
+                message: error.message
+            })
+        }
+    }
+    //find reward point rule by id
+    async findRewardPointRuleById (req,res) {
+        try {
+            let response = await Api(req["user"].clinicBaseURL, req["user"].clinicToken).get("wallet-point-reward/"+req.params.id)
+            if(response.data.success){
+                res.status(200).send({
+                    success: true,
+                    message: response.data.message,
+                    data: response.data.data
+                })
+            }else {
+                res.status(400).send({
+                    success: false,
+                    message: "Something went wrong"
+                })
+            }
+        }catch(error){
+            res.status(500).send({
+                error: true,
+                message: error.message
+            })
+        }
+    }
+    //update reward point rule
+    async updateRewardPointRule (req,res) {
+        try {
+            console.log("bod",req.body,req.params)
+            let response = await Api(req["user"].clinicBaseURL, req["user"].clinicToken).put("wallet-point-reward/"+req.params.id, req.body)
+            if(response.data.success){
+                res.status(200).send({
+                    success: true,
+                    message: "Updated Successfully"
+                })
+            }else {
+                res.status(400).send({
+                    success: false,
+                    message: "Something went wrong"
+                })
+            }
+        }catch(error){
+            res.status(500).send({
+                error: true,
+                message: error.message
+            })
+        }
+    }
+    //delete reward point rule
+    async deleteRewardPointRule (req,res) {
+        try {
+            let response = await Api(req["user"].clinicBaseURL, req["user"].clinicToken).delete("wallet-point-reward/"+req.params.id)
+            if(response.data.success){
+                res.status(200).send({
+                    success: true,
+                    message: "Deleted Successfully"
+                })
+            }else {
+                res.status(400).send({
+                    success: false,
+                    message: "Something went wrong"
+                })
+            }
+        }catch(error){
+            res.status(500).send({
+                error: true,
+                message: error.message
+            })
+        }
+    }
+    //add reward point
+    async addRewardPoint (req,res) {
+        try {
+            let response = await Api(req["user"].clinicBaseURL, req["user"].clinicToken).post("wallet-point-reward/add/point",req.body)
+            if(response.data.success){
+                res.status(200).send({
+                    success: true,
+                    message: "Added Point Successfully",
+                    add_point: response.data.add_point
+                })
+            }else {
+                res.status(200).send({
+                    success: false,
+                    message: response.data.message
+                })
+            }
+        }catch(error){
+            res.status(500).send({
+                error: true,
+                message: error.message
+            })
+        }
+    }
+}
+
+module.exports = TreatmentVoucherController

@@ -8,4 +8,8 @@ module.exports = (app) => {
 
     app.route("/api/v1/member-tier")
        .post(verifyToken, MemberTierController.createMemberTier)
+       .get(verifyToken, MemberTierController.listAllMemberTier)
+
+    app.route("/api/v1/member/tier/check")
+       .put(verifyToken, MemberTierController.checkMemberTier)
 }

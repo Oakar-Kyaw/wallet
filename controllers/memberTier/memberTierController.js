@@ -37,9 +37,9 @@ class MemberTierController {
             })
         }
     }
-    async listAllTreatmentCategory(req,res){
+    async listAllMemberTier(req,res){
         try{
-            let response = await Api(req["user"].clinicBaseURL, req["user"].clinicToken).get("wallet-treatment-categories")
+            let response = await Api(req["user"].clinicBaseURL, req["user"].clinicToken).get("wallet-member-tier")
             if(response.data){
                 res.status(200).send({
                     success: true,
@@ -131,7 +131,23 @@ class MemberTierController {
              })
          }
     }
-
+    async checkMemberTier(req,res){
+        try{
+            let response = await Api(req["user"].clinicBaseURL, req["user"].clinicToken).post("wallet/member/tier/check",req.body)
+            if(response.data.success){
+              res.status(200).send({
+              success: response.data.success,
+              message: response.data.message,
+              data: response.data.data
+            })  
+            }
+         }catch(error){
+             res.status(500).send({
+                 error: true,
+                 message: error.message
+             })
+         }
+    }
 }
 
 module.exports = MemberTierController

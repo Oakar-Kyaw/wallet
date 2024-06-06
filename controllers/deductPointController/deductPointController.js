@@ -12,9 +12,9 @@ class deductPointController {
                     data: response.data.data
                 })
             }else {
-                res.status(400).send({
-                    success: false,
-                    message: "Something went wrong"
+                res.status(200).send({
+                    success: response.data.success,
+                    message: response.data.message
                 })
             }
         }catch(error){
